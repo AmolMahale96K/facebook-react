@@ -1,0 +1,7 @@
+stages:
+    - build
+
+build_pro:
+    stage : build
+    script : 
+        - echo "Hello This Is Amol"
