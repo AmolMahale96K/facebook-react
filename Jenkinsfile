@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: '<your-repo-url>'
+                git branch: 'main', url: 'https://github.com/AmolMahale96K/facebook-react.git'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sshagent(['ec2-ssh-credentials']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@<EC2_PUBLIC_IP> << EOF
+                        ssh -o StrictHostKeyChecking=no ubuntu@13.232.150.121 << EOF
                         docker pull amolmahale96k/facebook:latest
                         docker stop facebook || true
                         docker rm facebook || true
