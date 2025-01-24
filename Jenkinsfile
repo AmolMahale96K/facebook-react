@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 // Clone the code from GitHub
-                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
+                git branch: 'main', url: 'https://github.com/AmolMahale96K/facebook-react.git'
             }
         }
 
@@ -40,12 +40,12 @@ pipeline {
                 script {
                     // Stop and remove any existing container
                     sh """
-                    docker stop facebook-react-container || true
-                    docker rm facebook-react-container || true
+                    docker stop fb || true
+                    docker rm fb || true
                     """
 
                     // Run the container
-                    sh 'docker run -d -p 3000:3000 --name facebook-react-container ${DOCKER_IMAGE}:latest'
+                    sh 'docker run -d -p 3000:3000 --name fb ${DOCKER_IMAGE}:latest'
                 }
             }
         }
