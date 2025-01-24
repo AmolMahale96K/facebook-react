@@ -1,17 +1,24 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'amolmahale96k/fb'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials-id' // Jenkins credentials ID for Docker Hub
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/AmolMahale96K/facebook-react.git'
+                // Clone the code from GitHub
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t facebook .'
+                    // Build the Docker image using the Dockerfile
+                    sh 'docker build -t ${DOCKER_IMAGE}:latest .'
                 }
             }
         }
@@ -19,27 +26,35 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        sh 'docker tag facebook amolmahale96k/facebook:latest'
-                        sh 'docker push amolmahale96k/facebook:latest'
-                    }
+                    // Log in to Docker Hub and push the image
+                    sh """
+                    echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                    docker push ${DOCKER_IMAGE}:latest
+                    """
                 }
             }
         }
 
-        stage('Deploy to AWS EC2') {
+        stage('Run Docker Container') {
             steps {
-                sshagent(['ec2-ssh-credentials']) {
+                script {
+                    // Stop and remove any existing container
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@13.232.150.121 << EOF
-                        docker pull amolmahale96k/facebook:latest
-                        docker stop facebook || true
-                        docker rm facebook || true
-                        docker run -d -p 80:3000 --name facebook amolmahale96k/facebook:latest
-                        EOF
+                    docker stop facebook-react-container || true
+                    docker rm facebook-react-container || true
                     """
+
+                    // Run the container
+                    sh 'docker run -d -p 3000:3000 --name facebook-react-container ${DOCKER_IMAGE}:latest'
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            // Clean up workspace after the pipeline is done
+            cleanWs()
         }
     }
 }
