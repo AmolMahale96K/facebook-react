@@ -10,7 +10,7 @@ function Facebook(){
                 <input type="text" placeholder="   Email address or phone number"/>
                 <input type="text" placeholder="   password"/>
                 <button>Log In</button>
-                <a href="#">Forgotten account?  Sign up for Facebook</a>
+                <a href="#">Forgotten account?  Sign up for Facebook</a>\
             </div>
         </div>
     )
